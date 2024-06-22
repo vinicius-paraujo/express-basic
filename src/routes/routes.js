@@ -21,8 +21,6 @@ client.connect().then(() => {
 const requestLimit = (resource, limit = 10) => async (req, res, next) => {
     const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
 
-    console.log("IP:", ip);
-
     const key = `rate-limit-${resource}-${ip}`;
     let requestCount = await client.get(key);
 
@@ -61,8 +59,6 @@ router.get("/", requestLimit("root"), async (req, res) => {
 });
 
 router.get("/document/:id", requestLimit("document"), async (req, res) => {
-    console.log(req.params);
-
     const { id } = req.params;
 
     if (!validateId(Number(id))) {
@@ -78,8 +74,6 @@ router.get("/document/:id", requestLimit("document"), async (req, res) => {
 });
 
 router.get("/document", requestLimit("document"), async (req, res) => {
-    console.log(req.params);
-
     const documents = await executeQuery("SELECT * FROM documents");
 
     res.send({ documents });
